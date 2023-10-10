@@ -14,123 +14,79 @@ class Usuario {
         $this->conexao = Banco::conecta();        
     }
 
-    /**
-     * Get the value of id
-     *
-     * @return int
-     */
+    /* Métodos para rotinas de CRUD no banco */
+
+    //INSERT de usuario
+
+    public function inserir():void {
+        $sql = "INSERT INTO usuarios(nome, email, senha, tipo)
+                VALUES(:nome, :email, :senha, :tipo)";
+
+                try {
+                    $consulta = $this->conexao->prepare($sql);
+                    $consulta->bindValue(":nome", $this->nome, PDO::PARAM_STR);
+                    $consulta->bindValue(":email", $this->email, PDO::PARAM_STR);
+                    $consulta->bindValue(":senha", $this->senha, PDO::PARAM_STR);
+                    $consulta->bindValue(":tipo", $this->tipo, PDO::PARAM_STR);
+                    $consulta->execute();
+                }catch(Exception $erro) {
+                    die("Erro ao inserir usuário:" .$erro->getMessage());
+                }
+    }
+
     public function getId(): int
     {
         return $this->id;
     }
-
-    /**
-     * Set the value of id
-     *
-     * @param int $id
-     *
-     * @return self
-     */
+    
     public function setId(int $id): self
     {
         $this->id = $id;
-
         return $this;
     }
-
-    /**
-     * Get the value of nome
-     *
-     * @return string
-     */
+    
     public function getNome(): string
     {
         return $this->nome;
     }
-
-    /**
-     * Set the value of nome
-     *
-     * @param string $nome
-     *
-     * @return self
-     */
+    
     public function setNome(string $nome): self
     {
         $this->nome = $nome;
-
         return $this;
     }
-
-    /**
-     * Get the value of email
-     *
-     * @return string
-     */
+    
     public function getEmail(): string
     {
         return $this->email;
     }
-
-    /**
-     * Set the value of email
-     *
-     * @param string $email
-     *
-     * @return self
-     */
+    
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
-
-    /**
-     * Get the value of senha
-     *
-     * @return string
-     */
+    
     public function getSenha(): string
     {
         return $this->senha;
     }
-
-    /**
-     * Set the value of senha
-     *
-     * @param string $senha
-     *
-     * @return self
-     */
+    
     public function setSenha(string $senha): self
     {
         $this->senha = $senha;
-
         return $this;
     }
-
-    /**
-     * Get the value of tipo
-     *
-     * @return string
-     */
+    
     public function getTipo(): string
     {
         return $this->tipo;
     }
-
-    /**
-     * Set the value of tipo
-     *
-     * @param string $tipo
-     *
-     * @return self
-     */
+    
     public function setTipo(string $tipo): self
     {
         $this->tipo = $tipo;
-
         return $this;
     }
+    
 }
