@@ -7,6 +7,31 @@ require_once "../inc/cabecalho-admin.php";
 $usuario = new Usuario;
 $usuario->setId($_GET["id"]);
 $dados = $usuario->listarUm();
+
+/*script para atualização */
+if( isset($_POST["atualizar"]) ) {
+	$usuario->setNome($_POST['nome']);
+	$usuario->setEmail($_POST['email']);
+	$usuario->setTipo($_POST['tipo']);
+
+	/*Algoritmos geral para tratamento da senha */
+
+	/*Se o campo senha no formulário estiver vazio, significa que o usuario
+	não mudou a senha */
+	if( empty($_POST['senha']) ){
+
+		/*Portanto, simplesmente repassamos a senha já
+		existente no banco ($dados['senha]) para o objeto
+		através do setSenha, sem qualquer alteração. */
+		$usuario->setSenha($dados['senha']);	
+	}else {
+
+	
+	
+	/*Caso ao contrário, se o usuario digitou alguma coisa no 
+	campo, precisaremos verificar o que foi digitado. */ 
+	}
+}
 ?>
 
 

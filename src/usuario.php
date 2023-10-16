@@ -64,6 +64,25 @@ class Usuario {
         return $resultado;
     }
 
+    //UPDATE de usuario
+    public function atualizar():void {
+        $sql = "UPDATE usuarios SET nome = :nome, email = :email, senha = :senha, tipo = :tipo WHERE id = :id";
+
+        try {
+            $consulta = $this->conexao->prepare($sql);
+            $consulta->bindValue(":id", $this->id, PDO::PARAM_INT);
+            $consulta->bindValue(":nome", $this->nome, PDO::PARAM_STR);
+            $consulta->bindValue(":email", $this->email, PDO::PARAM_STR);
+            $consulta->bindValue(":senha", $this->senha, PDO::PARAM_STR);
+            $consulta->bindValue(":tipo", $this->tipo, PDO::PARAM_STR);
+            $consulta->execute();
+
+        } catch (Exception $erro) {
+            die("erro ao atualiza usuário: ".$erro->getMessage());
+        }
+        return $resultado
+    }
+
 
 
 
@@ -71,6 +90,20 @@ class Usuario {
     /* Métodos para codificação e comparação de senha */
     public function codificaSenha(string $senha):string {
         return password_hash($senha, PASSWORD_DEFAULT);
+    }
+
+    public function verificaSenha(string $senhaFormulario, string $senhaBanco):string {
+        /*Usamos a função password_verify para comparar as duas senhas: a digitada
+        no formulario e a existente no banco de dados.*/
+        if(password_verify($senhaFormulario, $senhaBanco)) {
+            /*Se forem iguais, mantemos a senha já existente,
+            sem qualquer modificação. */ 
+            return $senhaBanco;
+        } else {
+            /*Se forem diferentes, então a nova senha (ou seja,
+            a que foi digitada no formulario) deve ser codificada */ 
+            return $this->codificaSenha($senhaFormulario);
+        }
     }
 
 
