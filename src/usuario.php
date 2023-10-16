@@ -48,8 +48,8 @@ class Usuario {
         return $resultado;
     }
 
-    //Select de Usuário
-    public function listarUm() :array {
+    // SELECT de Usuário
+    public function listarUm():array {
         $sql = "SELECT * FROM usuarios WHERE id = :id";
 
         try {
@@ -59,7 +59,8 @@ class Usuario {
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
             die("Erro ao carregar dados: ".$erro->getMessage());
-        } 
+        }
+
         return $resultado;
     }
 

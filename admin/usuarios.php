@@ -5,7 +5,7 @@ use Microblog\Utilitarios;
 $usuario = new Usuario;
 $listaDeUsuarios = $usuario->listar();  
 
-Utilitarios::dump($listaDeUsuarios);
+//Utilitarios::dump($listaDeUsuarios);
 
 ?>
 
