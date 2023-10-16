@@ -1,8 +1,11 @@
 <?php
+
 namespace Microblog;
+
 use PDO, Exception;
 
-class Usuario {
+class Usuario
+{
     private int $id;
     private string $nome;
     private string $email;
@@ -10,14 +13,16 @@ class Usuario {
     private string $tipo;
     private PDO $conexao;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->conexao = Banco::conecta();
     }
 
     /* Métodos para rotinas de CRUD no Banco */
 
     // INSERT de Usuario
-    public function inserir():void {
+    public function inserir(): void
+    {
         $sql = "INSERT INTO usuarios(nome, email, senha, tipo)
                 VALUES(:nome, :email, :senha, :tipo)";
 
@@ -29,12 +34,13 @@ class Usuario {
             $consulta->bindValue(":tipo", $this->tipo, PDO::PARAM_STR);
             $consulta->execute();
         } catch (Exception $erro) {
-            die("Erro ao inserir usuário: ".$erro->getMessage());
+            die("Erro ao inserir usuário: " . $erro->getMessage());
         }
     }
 
     // SELECT de Usuarios
-    public function listar():array {
+    public function listar(): array
+    {
         $sql = "SELECT * FROM usuarios ORDER BY nome";
 
         try {
@@ -42,14 +48,15 @@ class Usuario {
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao listar usuários: ".$erro->getMessage());
+            die("Erro ao listar usuários: " . $erro->getMessage());
         }
 
         return $resultado;
     }
 
     // SELECT de Usuário
-    public function listarUm():array {
+    public function listarUm(): array
+    {
         $sql = "SELECT * FROM usuarios WHERE id = :id";
 
         try {
@@ -58,15 +65,17 @@ class Usuario {
             $consulta->execute();
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao carregar dados: ".$erro->getMessage());
+            die("Erro ao carregar dados: " . $erro->getMessage());
         }
 
         return $resultado;
     }
 
-    //UPDATE de usuario
-    public function atualizar():void {
-        $sql = "UPDATE usuarios SET nome = :nome, email = :email, senha = :senha, tipo = :tipo WHERE id = :id";
+    // UPDATE de Usuário
+    public function atualizar(): void
+    {
+        $sql = "UPDATE usuarios SET nome = :nome, email = :email,
+        senha = :senha, tipo = :tipo WHERE id = :id";
 
         try {
             $consulta = $this->conexao->prepare($sql);
@@ -76,32 +85,52 @@ class Usuario {
             $consulta->bindValue(":senha", $this->senha, PDO::PARAM_STR);
             $consulta->bindValue(":tipo", $this->tipo, PDO::PARAM_STR);
             $consulta->execute();
-
         } catch (Exception $erro) {
-            die("erro ao atualiza usuário: ".$erro->getMessage());
+            die("Erro ao atualizar usuário: " . $erro->getMessage());
         }
-        return $resultado
     }
+
+
+    // EXCLUIR usuário
+    public function excluir()  {
+        $sql = "DELETE FROM usuarios WHERE id = :id";
+        try {
+            $consulta = $this->conexao->prepare($sql);
+            $consulta->bindValue(":id", $this->id, PDO::PARAM_INT);
+            $consulta->execute();
+        } catch (Exception $erro) {
+            die("Erro ao excluir: " .$erro->getMessage());
+        }
+    }
+
+
 
 
 
 
 
     /* Métodos para codificação e comparação de senha */
-    public function codificaSenha(string $senha):string {
+
+    public function codificaSenha(string $senha): string
+    {
         return password_hash($senha, PASSWORD_DEFAULT);
     }
 
-    public function verificaSenha(string $senhaFormulario, string $senhaBanco):string {
-        /*Usamos a função password_verify para comparar as duas senhas: a digitada
-        no formulario e a existente no banco de dados.*/
-        if(password_verify($senhaFormulario, $senhaBanco)) {
-            /*Se forem iguais, mantemos a senha já existente,
-            sem qualquer modificação. */ 
+    public function verificaSenha(
+        string $senhaFormulario,
+        string $senhaBanco
+    ): string {
+
+        /* Usamos a função password_verify para COMPARAR
+        as duas senha: a digitada no formulário e a existente
+        no banco de dados. */
+        if (password_verify($senhaFormulario, $senhaBanco)) {
+            /* Se forem IGUAIS, mantemos a senha já existente,
+            sem qualquer modificação. */
             return $senhaBanco;
         } else {
-            /*Se forem diferentes, então a nova senha (ou seja,
-            a que foi digitada no formulario) deve ser codificada */ 
+            /* Se forem DIFERENTES, então a nova senha (ou seja,
+            a que foi digitada no formulário) DEVE ser codificada. */
             return $this->codificaSenha($senhaFormulario);
         }
     }
@@ -114,7 +143,8 @@ class Usuario {
         return $this->nome;
     }
 
-    public function setNome(string $nome): self {
+    public function setNome(string $nome): self
+    {
         $this->nome = filter_var($nome, FILTER_SANITIZE_SPECIAL_CHARS);
         return $this;
     }
@@ -124,7 +154,8 @@ class Usuario {
         return $this->email;
     }
 
-    public function setEmail(string $email): self {
+    public function setEmail(string $email): self
+    {
         $this->email = filter_var($email, FILTER_SANITIZE_EMAIL);
         return $this;
     }
@@ -136,28 +167,32 @@ class Usuario {
     }
 
 
-    public function setSenha(string $senha): self {
+    public function setSenha(string $senha): self
+    {
         $this->senha = filter_var($senha, FILTER_SANITIZE_SPECIAL_CHARS);
         return $this;
     }
 
-    
+
     public function getTipo(): string
     {
         return $this->tipo;
     }
 
-   
-    public function setTipo(string $tipo): self {
+
+    public function setTipo(string $tipo): self
+    {
         $this->tipo = filter_var($tipo, FILTER_SANITIZE_SPECIAL_CHARS);
         return $this;
     }
 
-    public function getId(): int {
+    public function getId(): int
+    {
         return $this->id;
     }
 
-    public function setId(int $id): self {
+    public function setId(int $id): self
+    {
         $this->id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         return $this;
     }
