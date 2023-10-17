@@ -35,4 +35,11 @@ final class ControleDeAcesso
         $_SESSION["tipo"] = $tipo;       
 
     }
+
+    public function logout():void {
+        session_start();
+        session_destroy();
+        header("location:../login.php?logout");
+        die();
+    }
 }
