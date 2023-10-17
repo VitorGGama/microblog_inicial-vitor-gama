@@ -7,7 +7,10 @@ require_once "../vendor/autoload.php";
 $sessao = new ControleDeAcesso;
 
 /*Executando o metodo que verifica se tem alguem logado */ 
+
 $sessao->verificaAcesso();
+
+if(isset($_GET['sair'])) $sessao->logout();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="h-100">
@@ -56,7 +59,7 @@ $sessao->verificaAcesso();
                 <a class="nav-link" href="../index.php" target="_blank">Área pública</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link fw-bold" href=""> <i class="bi bi-x-circle"></i> Sair</a>
+                <a class="nav-link fw-bold" href="?sair"> <i class="bi bi-x-circle"></i> Sair</a>
             </li>
         </ul>
 
