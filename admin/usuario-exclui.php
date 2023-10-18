@@ -3,6 +3,8 @@ use Microblog\Usuario;
 use Microblog\ControleDeAcesso;
 require_once "../vendor/autoload.php";
 
+$sessao->verificaAcessoAdmin();
+
 $sessao = new ControleDeAcesso;
 $sessao->verificaAcesso();
 
