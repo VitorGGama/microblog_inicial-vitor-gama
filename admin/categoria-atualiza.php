@@ -1,8 +1,28 @@
-<?php 
-require_once "../inc/cabecalho-admin.php";
+<?php
 use Microblog\Categoria;
+use Microblog\Utilitarios;
+
+require_once "../inc/cabecalho-admin.php";
 
 $sessao->verificaAcessoAdmin();
+
+    $categoria = new Categoria;
+    $categoria->setId($_GET['id']);
+    $dados = $categoria->lerUM();
+
+	if( isset($_POST["atualizar"]) ){
+		$categoria->setNome($_POST['nome']);
+
+		if( empty($_POST['senha']) ){ 
+			$usuario->setSenha($dados['senha']);	
+		} else {
+			$usuario->setSenha(
+				$usuario->verificaSenha($_POST['senha'], $dados['senha'])
+			);
+		}
+		$usuario->atualizar();
+		header("location:usuarios.php");
+
 ?>
 
 
