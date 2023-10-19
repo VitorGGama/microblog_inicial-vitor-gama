@@ -1,19 +1,18 @@
-<?php 
+<?php
 require_once "../inc/cabecalho-admin.php";
 use Microblog\Categoria;
 
 $sessao->verificaAcessoAdmin();
 
-if(isset($_POST['inserir'])) {
-	$categoria = new Categoria;
-	$categoria->setNome($_POST['nome']);
+if (isset($_POST['inserir'])) {
+    $categoria = new Categoria;
+    $categoria->setNome($_POST['nome']);
 
-	$categoria->inserir();
-	header("location:categorias.php");
+    $categoria->inserir();
+    header("location: categorias.php");
 }
-
-
 ?>
+
 
 
 <div class="row">
