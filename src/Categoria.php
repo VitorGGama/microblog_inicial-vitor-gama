@@ -111,7 +111,7 @@ final class Categoria
             $consulta->bindValue(":id", $this->id, PDO::PARAM_INT);
             $consulta->execute();
         } catch (Exception $erro) {
-            die("Erro ao excluir: " .$erro->getMessage());
+            die("Erro ao excluir categoria: " .$erro->getMessage());
         }
     }
     
