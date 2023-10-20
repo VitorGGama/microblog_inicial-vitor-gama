@@ -56,6 +56,35 @@ if( isset($_POST["atualizar"]) ){
 				<input class="form-control" type="text" id="nome" name="nome" required value="<?=$dados['nome']?>">
 			</div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+
 			<div class="mb-3">
 				<label class="form-label" for="email">E-mail:</label>
 				<input class="form-control" type="email" id="email" name="email" required value="<?=$dados['email']?>">

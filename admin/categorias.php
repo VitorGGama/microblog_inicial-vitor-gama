@@ -1,5 +1,10 @@
 <?php 
+use Microblog\Categoria;
 require_once "../inc/cabecalho-admin.php";
+
+$categoria = new Categoria;
+$listaCategoria = $categoria->listar();
+
 ?>
 
 
@@ -7,7 +12,7 @@ require_once "../inc/cabecalho-admin.php";
 	<article class="col-12 bg-white rounded shadow my-1 py-4">
 		
 		<h2 class="text-center">
-		Categorias <span class="badge bg-dark">X</span>
+		Categorias <span class="badge bg-dark"><?=count($listaCategoria)?></span>
 		</h2>
 
 		<p class="text-center mt-5">
@@ -27,22 +32,22 @@ require_once "../inc/cabecalho-admin.php";
 				</thead>
 
 				<tbody>
-
+				<?php foreach($listaCategoria as $categ ) { ?>
 					<tr>
-						<td> Nome... </td>
+						<td> <?=$categ['nome']?> </td>
 						<td class="text-center">
 							<a class="btn btn-warning" 
-							href="categoria-atualiza.php">
+							href="categoria-atualiza.php?id=<?=$categ['id']?>">
 							<i class="bi bi-pencil"></i> Atualizar
 							</a>
 						
 							<a class="btn btn-danger excluir" 
-							href="categoria-exclui.php">
+							href="categoria-exclui.php?id=<?=$categ['id']?>">
 							<i class="bi bi-trash"></i> Excluir
 							</a>
 						</td>
 					</tr>
-
+				<?php } ?>
 				</tbody>                
 			</table>
 	    </div>
