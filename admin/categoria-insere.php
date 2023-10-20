@@ -7,7 +7,6 @@ $sessao->verificaAcessoAdmin();
 if (isset($_POST['inserir'])) {
     $categoria = new Categoria;
     $categoria->setNome($_POST['nome']);
-
     $categoria->inserir();
     header("location: categorias.php");
 }

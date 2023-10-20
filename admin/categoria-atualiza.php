@@ -4,15 +4,14 @@ use Microblog\Utilitarios;
 
 require_once "../inc/cabecalho-admin.php";
 
+$sessao->verificaAcessoAdmin();
+
 $categoria = new Categoria;
 $categoria->setId($_GET['id']);
 $dados = $categoria->lerUM();
 
 if( isset($_POST["atualizar"]) ){
-	$categoria->setNome($_POST['nome']);
-	
-		
-	
+	$categoria->setNome($_POST['nome']);	
 	$categoria->atualizar();
 	header("location:categorias.php");
 }
