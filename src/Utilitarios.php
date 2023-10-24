@@ -7,7 +7,7 @@ abstract class Utilitarios {
     diferentes de acordo com a chamada do metodo, 
     usamos o operador | (ou) entre as opções de tipos. 
     Essa sintax é válida a partir do php 7.4 */
-    public static function dump(array | bool $dados):void {
+    public static function dump(array | bool | object $dados):void {
         echo "<pre>";
         var_dump($dados);
         echo "</pre>";
