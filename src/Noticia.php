@@ -32,6 +32,39 @@ de noticia. */
         $this->conexao = Banco::conecta();
     }
 
+    /* metodo para upload de foto */
+    public function upload(array $arquivo):void {
+        //defeinindo os tipos válidos
+        $tiposValidos = [
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/svg+xml"
+        ];
+
+        //Verificando se o arquivo não é um dos tipos válidos
+        if( !in_array($arquivo["type"], $tiposValidos) ){
+            die(
+                "<script>
+                 alert('Formato inválido!');
+            history.back();
+            </script>
+            ");
+        }
+
+        //Acessando apenas o nome/extensão do arquivo
+        $nome = $arquivo["name"];
+
+        //acessando os dados de acesso/armazenamento temporarios
+        $temporario = $arquivo["tmp_name"];
+
+        //definindo a pasta de destino das imagens no site
+        $pastaFinal = "../imagens/".$nome;
+
+        //movemos/enviamos da area temporaria para a final/destino
+        move_uploaded_file($temporario, $pastaFinal);
+    }
+
     /* metodos CRUD */
     public function inserir(): void
     {
