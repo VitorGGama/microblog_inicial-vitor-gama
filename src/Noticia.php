@@ -1,11 +1,8 @@
 <?php
-
 namespace Microblog;
-
 use PDO, Exception;
 
-final class Noticia
-{
+final class Noticia {
     private int $id;
     private string $data;
     private string $titulo;
@@ -16,67 +13,32 @@ final class Noticia
     private string $termo; // será usado na busca
     private PDO $conexao;
 
+    /* Propriedades cujos tipos são ASSOCIADOS
+    às classes já existentes. Isso permitirá usar
+    recursos destas classes à partir de Noticia. */
     public Usuario $usuario;
     public Categoria $categoria;
 
-    /* Propriedades cujos tipos são ASSOCIADOS ás classes já 
-existentes. Isso permitirá usar recurso destas classes á partir
-de noticia. */
-    public function __construct()
-    {
+    public function __construct(){
         /* Ao criar um objeto Noticia, aproveitamos para
-        instanciar objetos de Usuario e Categoria. */
+        instanciar objetos de Usuario e Categoria */
         $this->usuario = new Usuario;
         $this->categoria = new Categoria;
 
         $this->conexao = Banco::conecta();
     }
 
-    /* metodo para upload de foto */
-    public function upload(array $arquivo):void {
-        //defeinindo os tipos válidos
-        $tiposValidos = [
-            "image/png",
-            "image/jpeg",
-            "image/gif",
-            "image/svg+xml"
-        ];
-
-        //Verificando se o arquivo não é um dos tipos válidos
-        if( !in_array($arquivo["type"], $tiposValidos) ){
-            die(
-                "<script>
-                 alert('Formato inválido!');
-            history.back();
-            </script>
-            ");
-        }
-
-        //Acessando apenas o nome/extensão do arquivo
-        $nome = $arquivo["name"];
-
-        //acessando os dados de acesso/armazenamento temporarios
-        $temporario = $arquivo["tmp_name"];
-
-        //definindo a pasta de destino das imagens no site
-        $pastaFinal = "../imagens/".$nome;
-
-        //movemos/enviamos da area temporaria para a final/destino
-        move_uploaded_file($temporario, $pastaFinal);
-    }
-
-    /* metodos CRUD */
-    public function inserir(): void
-    {
+    /* Métodos CRUD */
+    public function inserir():void {
         $sql = "INSERT INTO noticias(
-            data, titulo, texto, resumo,
-            imagem, destaque,
+            titulo, texto, resumo,
+            imagem, destaque, 
             usuario_id, categoria_id
-            ) VALUES(
+        ) VALUES(
             :titulo, :texto, :resumo,
-            :imagem, :destaque,
-            :usuario_id, :categoria_id)";
-
+            :imagem, :destaque, 
+            :usuario_id, :categoria_id
+        )";
 
         try {
             $consulta = $this->conexao->prepare($sql);
@@ -85,16 +47,56 @@ de noticia. */
             $consulta->bindValue(":resumo", $this->resumo, PDO::PARAM_STR);
             $consulta->bindValue(":imagem", $this->imagem, PDO::PARAM_STR);
             $consulta->bindValue(":destaque", $this->destaque, PDO::PARAM_STR);
-            /*Aqui, primeiro chamamos os getters de ID do usuario e de Categoria 
-        para só, depois acessar os valores aos parametros da consulta SQL.
-        Isso é possivel devido á associação entre as classes. */
-
+            
+            /* Aqui, primeiro chamamos os getters de ID do Usuario e de Categoria,
+            para só depois associar os valores aos parâmetros da consulta SQL.
+            Isso é possível devido à associação entre as Classes. */
             $consulta->bindValue(":usuario_id", $this->usuario->getId(), PDO::PARAM_INT);
             $consulta->bindValue(":categoria_id", $this->categoria->getId(), PDO::PARAM_INT);
         } catch (Exception $erro) {
             die("Erro ao inserir notícia: " . $erro->getMessage());
         }
     }
+
+
+
+    /* Método para upload de foto */
+    public function upload(array $arquivo):void {
+        
+        // Definindo os tipos válidos
+        $tiposValidos = [
+            "image/png", 
+            "image/jpeg", 
+            "image/gif", 
+            "image/svg+xml"
+        ];
+
+        // Verificando se o arquivo NÃO É um dos tipos válidos
+        if( !in_array($arquivo["type"], $tiposValidos) ){
+            // Alertamos o usuário e o fazemos voltar para o form.
+            die("
+                <script>
+                alert('Formato inválido!');
+                history.back();
+                </script>                
+            ");
+        }
+
+        // Acessando APENAS o nome/extensão do arquivo
+        $nome = $arquivo["name"];
+
+        // Acessando os dados de acesso/armazenamento temporários
+        $temporario = $arquivo["tmp_name"];
+
+        // Definindo a pasta de destino das imagens no site
+        $pastaFinal = "../imagens/".$nome;
+
+        // Movemos/enviamos da área temporária para a final/destino
+        move_uploaded_file($temporario, $pastaFinal);
+    }
+
+
+
 
     public function getId(): int
     {
@@ -198,4 +200,7 @@ de noticia. */
         $this->termo = filter_var($termo, FILTER_SANITIZE_SPECIAL_CHARS);
         return $this;
     }
+
+
+   
 }
