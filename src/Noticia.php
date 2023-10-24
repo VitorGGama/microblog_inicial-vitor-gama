@@ -1,8 +1,11 @@
 <?php
+
 namespace Microblog;
+
 use PDO, Exception;
 
-final class Noticia {
+final class Noticia
+{
     private int $id;
     private string $data;
     private string $titulo;
@@ -16,18 +19,49 @@ final class Noticia {
     public Usuario $usuario;
     public Categoria $categoria;
 
-/* Propriedades cujos tipos são ASSOCIADOS ás classes já 
+    /* Propriedades cujos tipos são ASSOCIADOS ás classes já 
 existentes. Isso permitirá usar recurso destas classes á partir
 de noticia. */
-    public function __construct() {
+    public function __construct()
+    {
         /* Ao criar um objeto Noticia, aproveitamos para
         instanciar objetos de Usuario e Categoria. */
-       $this->usuario = new Usuario;
-       $this->categoria = new Categoria;
+        $this->usuario = new Usuario;
+        $this->categoria = new Categoria;
 
-        $this->conexao = Banco::conecta();        
+        $this->conexao = Banco::conecta();
     }
 
+    /* metodos CRUD */
+    public function inserir(): void
+    {
+        $sql = "INSERT INTO noticias(
+            data, titulo, texto, resumo,
+            imagem, destaque,
+            usuario_id, categoria_id
+            ) VALUES(
+            :titulo, :texto, :resumo,
+            :imagem, :destaque,
+            :usuario_id, :categoria_id)";
+
+
+        try {
+            $consulta = $this->conexao->prepare($sql);
+            $consulta->bindValue(":titulo", $this->titulo, PDO::PARAM_STR);
+            $consulta->bindValue(":texto", $this->texto, PDO::PARAM_STR);
+            $consulta->bindValue(":resumo", $this->resumo, PDO::PARAM_STR);
+            $consulta->bindValue(":imagem", $this->imagem, PDO::PARAM_STR);
+            $consulta->bindValue(":destaque", $this->destaque, PDO::PARAM_STR);
+            /*Aqui, primeiro chamamos os getters de ID do usuario e de Categoria 
+        para só, depois acessar os valores aos parametros da consulta SQL.
+        Isso é possivel devido á associação entre as classes. */
+
+            $consulta->bindValue(":usuario_id", $this->usuario->getId(), PDO::PARAM_INT);
+            $consulta->bindValue(":categoria_id", $this->categoria->getId(), PDO::PARAM_INT);
+        } catch (Exception $erro) {
+            die("Erro ao inserir notícia: " . $erro->getMessage());
+        }
+    }
 
     public function getId(): int
     {
@@ -131,7 +165,4 @@ de noticia. */
         $this->termo = filter_var($termo, FILTER_SANITIZE_SPECIAL_CHARS);
         return $this;
     }
-
-
-   
 }
