@@ -20,8 +20,7 @@ if(isset($_POST["inserir"])){
 	//ID da categoria escolhida para a noticia
 	$noticia->categoria->setId($_POST['categoria']);
 	
-	Utilitarios::dump($noticia);
-
+	
 	/* Sobre a imagem
 	-Capturar o arquivo de imagem e enviar para o servidor 
 	-Capturar o nome/extensão e enviar para o banco de dados*/
@@ -39,8 +38,9 @@ if(isset($_POST["inserir"])){
 		<h2 class="text-center">
 		Inserir nova notícia
 		</h2>
-				
-		<form class="mx-auto w-75" action="" method="post" id="form-inserir" name="form-inserir">
+		
+		<!--Para que o fromualario aceite arquivos (upload), é necessário habilitar o atributo enctype -->
+		<form class="mx-auto w-75" action="" method="post" id="form-inserir" name="form-inserir" enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label class="form-label" for="categoria">Categoria:</label>
