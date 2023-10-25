@@ -61,25 +61,49 @@ final class Noticia {
 
     public function listar():array {
 
-        //SQL para usuario ADMIN
-        /*$sql = "SELECT noticias.id, 
+        /* se o tipo de usuario logado for admin*/
+        if( $this->usuario->getTipo() === "admin" ) {
+            //Considere o SQL abaixo (pega tudo de todos)
+
+            //SQL para usuario ADMIN
+        $sql = "SELECT noticias.id, 
                        noticias.titulo,
                        noticias.data, 
                        usuarios.nome AS autor, 
                        noticias.destaque
                        FROM noticias INNER JOIN usuarios
                        ON noticias.usuario_id = usuarios.id
-                       ORDER BY data DESC";*/
-
-        //SQL para usuario Editor
-        $sql = "SELECT id, 
-                       titulo, 
-                       data, 
-                       destaque
-                       FROM noticias WHERE usuario_id = :usuario_id 
                        ORDER BY data DESC";
-                                      
-    }
+        } else {
+            //Senão, considere o SQL abaixo (pega somente referente ao editor)
+
+            //SQL para usuario Editor
+        $sql = "SELECT id, 
+        titulo, 
+        data, 
+        destaque
+        FROM noticias WHERE usuario_id = :usuario_id 
+        ORDER BY data DESC";                   
+        }
+        try{
+            $consulta = $this->conexao->prepare($sql);
+
+            if( $this->usuario->getTipo() !== "admin" ){
+            $consulta->bindValue(":usuario_id", $this->usuario->getId(), PDO::PARAM_INT);
+        }
+
+            $consulta->execute();
+
+            $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $erro) {
+            die("Erro ao carregar notícias: " . $erro->getMessage());
+        }
+        return $resultado;
+    } // FInal listar
+
+        
+
+        
 
 
 
