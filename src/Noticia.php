@@ -62,14 +62,23 @@ final class Noticia {
     public function listar():array {
 
         //SQL para usuario ADMIN
-        $sql = "SELECT noticias.id, 
+        /*$sql = "SELECT noticias.id, 
                        noticias.titulo,
                        noticias.data, 
                        usuarios.nome AS autor, 
                        noticias.destaque
                        FROM noticias INNER JOIN usuarios
                        ON noticias.usuario_id = usuarios.id
+                       ORDER BY data DESC";*/
+
+        //SQL para usuario Editor
+        $sql = "SELECT id, 
+                       titulo, 
+                       data, 
+                       destaque
+                       FROM noticias WHERE usuario_id = :usuario_id 
                        ORDER BY data DESC";
+                                      
     }
 
 
