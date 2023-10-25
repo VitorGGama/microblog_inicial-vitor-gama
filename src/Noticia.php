@@ -53,9 +53,23 @@ final class Noticia {
             Isso é possível devido à associação entre as Classes. */
             $consulta->bindValue(":usuario_id", $this->usuario->getId(), PDO::PARAM_INT);
             $consulta->bindValue(":categoria_id", $this->categoria->getId(), PDO::PARAM_INT);
+            $consulta->execute();
         } catch (Exception $erro) {
             die("Erro ao inserir notícia: " . $erro->getMessage());
         }
+    }
+
+    public function listar():array {
+
+        //SQL para usuario ADMIN
+        $sql = "SELECT noticias.id, 
+                       noticias.titulo,
+                       noticias.data, 
+                       usuarios.nome AS autor, 
+                       noticias.destaque
+                       FROM noticias INNER JOIN usuarios
+                       ON noticias.usuario_id = usuarios.id
+                       ORDER BY data DESC";
     }
 
 
