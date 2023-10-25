@@ -62,12 +62,12 @@ $listaDeNoticias = $noticia->listar();
 							<td><?= $itemNoticia['destaque'] ?></td>
 
 							<td class="text-center">
-								<a class="btn btn-warning" href="noticia-atualiza.php">
+								<a class="btn btn-warning" href="noticia-atualiza.php?id=<?= $itemNoticia['id'] ?>">
 									<i class="bi bi-pencil"></i> Atualizar
 								</a>
 							</td>
 							<td>
-								<a class="btn btn-danger excluir" href="noticia-exclui.php">
+								<a class="btn btn-danger excluir" href="noticia-exclui.php?id=<?= $itemNoticia['id'] ?>">
 									<i class="bi bi-trash"></i> Excluir
 								</a>
 							</td>
