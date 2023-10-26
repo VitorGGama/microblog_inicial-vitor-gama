@@ -23,7 +23,7 @@ $listaDeNoticias = $noticia->listar();
 	<article class="col-12 bg-white rounded shadow my-1 py-4">
 
 		<h2 class="text-center">
-			Notícias <span class="badge bg-dark"><?php count($listaDeNoticias) ?></span>
+			Notícias <span class="badge bg-dark"><?= count($listaDeNoticias)?></span>
 		</h2>
 
 		<p class="text-center mt-5">

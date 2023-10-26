@@ -14,13 +14,30 @@ $noticia->usuario->setTipo($_SESSION['tipo']);
 $noticia->setId($_GET['id']);
 $dados = $noticia->listarUm();
 
-if(isset($_POST["atualizar"])){
+if (isset($_POST["atualizar"])) {
     $noticia->setTitulo($_POST["titulo"]);
     $noticia->setTexto($_POST["texto"]);
     $noticia->setResumo($_POST["resumo"]);
     $noticia->setDestaque($_POST["destaque"]);
     $noticia->categoria->setId($_POST["categoria"]);
+
+    /*Lógica/Algoritmo para atualizar a foto (se necessário) */
+    if (empty($_FILES["imagem"]["name"])) {
+        $noticia->setImagem($_POST["imagem-existente"]);
+    } else {
+        /* caso contrário, vamos pegar a referencia (nome/extensão) da 
+        nova imagem, fazer upload do novo arquivo e enviar a referencia
+        para o objeto usando setter.*/
+        $noticia->upload($_FILES["imagem"]);
+        $noticia->setImagem($_FILES["imagem"]["name"]);
+    }
+    $noticia->atualizar();
+    header("location:noticias.php");
+
+    /* Se o campo imagem estuver vazio, então significa que o usuario
+    NÃO QUER TROCAR DE IAMGEM. Portanto, vamos manter a imagem existente. */
 }
+
 ?>
 
 
@@ -37,8 +54,8 @@ if(isset($_POST["atualizar"])){
                 <label class="form-label" for="categoria">Categoria:</label>
                 <select class="form-select" name="categoria" id="categoria" required>
                     <option value=""></option>
-                    <?php foreach($listaDeCategorias as $categ ) { ?>
-                        <option <?php if($dados["categoria_id"] === $categ["id"]) echo " selected " ?> value="<?=$categ['id']?>"><?=$categ["nome"]?></option>
+                    <?php foreach ($listaDeCategorias as $categ) { ?>
+                        <option <?php if ($dados["categoria_id"] === $categ["id"]) echo " selected " ?> value="<?= $categ['id'] ?>"><?= $categ["nome"] ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -50,19 +67,19 @@ if(isset($_POST["atualizar"])){
 
             <div class="mb-3">
                 <label class="form-label" for="texto">Texto:</label>
-                <textarea class="form-control" required name="texto" id="texto" cols="50" rows="6"><?=$dados['texto']?></textarea>
+                <textarea class="form-control" required name="texto" id="texto" cols="50" rows="6"><?= $dados['texto'] ?></textarea>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="resumo">Resumo (máximo de 300 caracteres):</label>
                 <span id="maximo" class="badge bg-danger">0</span>
-                <textarea class="form-control" required name="resumo" id="resumo" cols="50" rows="2" maxlength="300"><?=$dados['resumo']?></textarea>
+                <textarea class="form-control" required name="resumo" id="resumo" cols="50" rows="2" maxlength="300"><?= $dados['resumo'] ?></textarea>
             </div>
 
             <div class="mb-3">
                 <label for="imagem-existente" class="form-label">Imagem da notícia:</label>
                 <!-- campo somente leitura, meramente informativo -->
-                <input value="<?=$dados['imagem']?>" class="form-control" type="text" id="imagem-existente" name="imagem-existente" readonly>
+                <input value="<?= $dados['imagem'] ?>" class="form-control" type="text" id="imagem-existente" name="imagem-existente" readonly>
             </div>
 
             <div class="mb-3">
@@ -72,10 +89,10 @@ if(isset($_POST["atualizar"])){
 
             <div class="mb-3">
                 <p>Deixar a notícia em destaque?
-                    <input <?php if($dados["destaque"] === "nao" ) echo " checked " ?> type="radio" class="btn-check" name="destaque" id="nao" autocomplete="off" checked value="nao">
+                    <input <?php if ($dados["destaque"] === "nao") echo " checked " ?> type="radio" class="btn-check" name="destaque" id="nao" autocomplete="off" checked value="nao">
                     <label class="btn btn-outline-danger" for="nao">Não</label>
 
-                    <input <?php if($dados["destaque"] === "sim" ) echo " checked " ?> type="radio" class="btn-check" name="destaque" id="sim" autocomplete="off" value="sim">
+                    <input <?php if ($dados["destaque"] === "sim") echo " checked " ?> type="radio" class="btn-check" name="destaque" id="sim" autocomplete="off" value="sim">
                     <label class="btn btn-outline-success" for="sim">Sim</label>
                 </p>
             </div>
