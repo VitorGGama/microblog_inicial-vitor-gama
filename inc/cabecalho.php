@@ -1,4 +1,5 @@
 <?php 
+/* Out buffer (gerenciamento de memória de saída )*/
 ob_start();
 require_once "vendor/autoload.php";
 
