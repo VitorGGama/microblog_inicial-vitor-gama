@@ -1,11 +1,8 @@
 <?php
-
 namespace Microblog;
-
 use PDO, Exception;
 
-final class Noticia
-{
+final class Noticia {
     private int $id;
     private string $data;
     private string $titulo;
@@ -22,8 +19,7 @@ final class Noticia
     public Usuario $usuario;
     public Categoria $categoria;
 
-    public function __construct()
-    {
+    public function __construct(){
         /* Ao criar um objeto Noticia, aproveitamos para
         instanciar objetos de Usuario e Categoria */
         $this->usuario = new Usuario;
@@ -33,8 +29,7 @@ final class Noticia
     }
 
     /* Métodos CRUD */
-    public function inserir(): void
-    {
+    public function inserir():void {
         $sql = "INSERT INTO noticias(
             titulo, texto, resumo,
             imagem, destaque, 
@@ -52,7 +47,7 @@ final class Noticia
             $consulta->bindValue(":resumo", $this->resumo, PDO::PARAM_STR);
             $consulta->bindValue(":imagem", $this->imagem, PDO::PARAM_STR);
             $consulta->bindValue(":destaque", $this->destaque, PDO::PARAM_STR);
-
+            
             /* Aqui, primeiro chamamos os getters de ID do Usuario e de Categoria,
             para só depois associar os valores aos parâmetros da consulta SQL.
             Isso é possível devido à associação entre as Classes. */
@@ -66,11 +61,10 @@ final class Noticia
     }
 
 
-    public function listar(): array
-    {
-
+    public function listar():array {
+        
         /* Se o tipo de usuário logado for admin */
-        if ($this->usuario->getTipo() === "admin") {
+        if( $this->usuario->getTipo() === "admin" ){
             // Considere o SQL abaixo (pega tudo de todos)
             $sql = "SELECT noticias.id, noticias.titulo, 
                     noticias.data, usuarios.nome AS autor, noticias.destaque
@@ -81,34 +75,31 @@ final class Noticia
             // Senão, considere o SQL abaixo (pega somente referente ao editor)
             $sql = "SELECT id, titulo, data, destaque
                     FROM noticias WHERE usuario_id = :usuario_id
-                    ORDER BY data DESC";
-        }
-
+                    ORDER BY data DESC";            
+        }  
+        
         try {
             $consulta = $this->conexao->prepare($sql);
-
+            
             /* Somente se NÃO for um admin, trate o parâmetro abaixo */
-            if ($this->usuario->getTipo() !== "admin") {
+            if( $this->usuario->getTipo() !== "admin" ){
                 $consulta->bindValue(
-                    ":usuario_id",
-                    $this->usuario->getId(),
-                    PDO::PARAM_INT
+                    ":usuario_id", $this->usuario->getId(), PDO::PARAM_INT
                 );
             }
-
+            
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao carregar notícias: " . $erro->getMessage());
+            die("Erro ao carregar notícias: ".$erro->getMessage());
         }
 
         return $resultado;
     } // final listar()
 
 
-    public function listarUm(): array
-    {
-        if ($this->usuario->getTipo() === "admin") {
+    public function listarUm():array {
+        if($this->usuario->getTipo() === "admin"){
             // Carrega dados de qualquer noticia de qualquer pessoa
             $sql = "SELECT * FROM noticias WHERE id = :id";
         } else {
@@ -121,26 +112,23 @@ final class Noticia
             $consulta = $this->conexao->prepare($sql);
             $consulta->bindValue(":id", $this->id, PDO::PARAM_INT);
 
-            if ($this->usuario->getTipo() !== "admin") {
+            if($this->usuario->getTipo() !== "admin"){
                 $consulta->bindValue(
-                    ":usuario_id",
-                    $this->usuario->getId(),
-                    PDO::PARAM_INT
+                    ":usuario_id", $this->usuario->getId(), PDO::PARAM_INT
                 );
             }
 
             $consulta->execute();
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao carregar notícia: " . $erro->getMessage());
+            die("Erro ao carregar notícia: ".$erro->getMessage());
         }
         return $resultado;
     }
 
 
-    public function atualizar(): void
-    {
-        if ($this->usuario->getTipo() === "admin") {
+    public function atualizar():void {
+        if($this->usuario->getTipo() === "admin"){
             $sql = "UPDATE noticias SET
                     titulo = :titulo, texto = :texto, resumo = :resumo,
                     imagem = :imagem, categoria_id = :categoria_id,
@@ -162,37 +150,32 @@ final class Noticia
             $consulta->bindValue(":imagem", $this->imagem, PDO::PARAM_STR);
             $consulta->bindValue(":destaque", $this->destaque, PDO::PARAM_STR);
             $consulta->bindValue(":categoria_id", $this->categoria->getId(), PDO::PARAM_INT);
-
-            if ($this->usuario->getTipo() !== "admin") {
+            if($this->usuario->getTipo() !== "admin"){
                 $consulta->bindValue(
-                    ":usuario_id",
-                    $this->usuario->getId(),
-                    PDO::PARAM_INT
+                    ":usuario_id", $this->usuario->getId(), PDO::PARAM_INT
                 );
             }
-
             $consulta->execute();
         } catch (Exception $erro) {
             die("Erro ao atualizar notícia: " . $erro->getMessage());
         }
     }
 
-    public function excluir(): void
-    {
-        if ($this->usuario->getTipo() === "admin") {
+
+    public function excluir():void {
+        if($this->usuario->getTipo() === "admin"){
             $sql = "DELETE FROM noticias WHERE id = :id";
         } else {
-            $sql = "DELETE FROM noticias WHERE usuario_id = :usuario_id";
+            $sql = "DELETE FROM noticias 
+                    WHERE id = :id AND usuario_id = :usuario_id";
         }
 
         try {
             $consulta = $this->conexao->prepare($sql);
             $consulta->bindValue(":id", $this->id, PDO::PARAM_INT);
-
-            if ($this->usuario->getTipo() !== "admin") {
+            if($this->usuario->getTipo() !== "admin"){
                 $consulta->bindValue(":usuario_id", $this->usuario->getId(), PDO::PARAM_INT);
             }
-
             $consulta->execute();
         } catch (Exception $erro) {
             die("Erro ao excluir notícia: " . $erro->getMessage());
@@ -201,23 +184,19 @@ final class Noticia
 
 
 
-
-
-
     /* Método para upload de foto */
-    public function upload(array $arquivo): void
-    {
-
+    public function upload(array $arquivo):void {
+        
         // Definindo os tipos válidos
         $tiposValidos = [
-            "image/png",
-            "image/jpeg",
-            "image/gif",
+            "image/png", 
+            "image/jpeg", 
+            "image/gif", 
             "image/svg+xml"
         ];
 
         // Verificando se o arquivo NÃO É um dos tipos válidos
-        if (!in_array($arquivo["type"], $tiposValidos)) {
+        if( !in_array($arquivo["type"], $tiposValidos) ){
             // Alertamos o usuário e o fazemos voltar para o form.
             die("
                 <script>
@@ -234,81 +213,79 @@ final class Noticia
         $temporario = $arquivo["tmp_name"];
 
         // Definindo a pasta de destino das imagens no site
-        $pastaFinal = "../imagens/" . $nome;
+        $pastaFinal = "../imagens/".$nome;
 
         // Movemos/enviamos da área temporária para a final/destino
         move_uploaded_file($temporario, $pastaFinal);
     }
 
-    /*Métodos da área pública */
-    public function listarDestaques(): array
-    {
+
+    /* Métodos da área pública */
+
+    // index.php
+    public function listarDestaques():array{
         $sql = "SELECT id, titulo, resumo, imagem FROM noticias
-        WHERE destaque = :destaque ORDER BY data DESC";
+                WHERE destaque = :destaque ORDER BY data DESC";
+
         try {
             $consulta = $this->conexao->prepare($sql);
             $consulta->bindValue(":destaque", $this->destaque, PDO::PARAM_STR);
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao carregar destaques: " . $erro->getMessage());
+            die("Erro ao carregar destaques: ".$erro->getMessage());
         }
         return $resultado;
     }
 
-    public function listarTodas(): array
-    {
-        $sql = "SELECT id, data, titulo, resumo FROM noticias
-        ORDER BY data DESC";
+    // index.php
+    public function listarTodas():array {
+        $sql = "SELECT id, data, titulo, resumo FROM noticias 
+                ORDER BY data DESC";
         try {
             $consulta = $this->conexao->prepare($sql);
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao carregar noticia " . $erro->getMessage());
+            die("Erro ao carregar notícias: ".$erro->getMessage());
         }
         return $resultado;
     }
 
-
-    //noticia.php
-    public function listarDetalhes(): array
-    {
-        $sql = "SELECT 
-                    noticias.id,
-                    noticias.titulo,
-                    noticias.data,
-                    usuarios.nome as autor,
-                    noticias.texto,
-                    noticias.imagem
-                    FROM noticias INNER JOIN usuarios
-                    ON noticias.usuario_id = usuarios.id
-                    WHERE noticias.id = :id";
-
+    // noticia.php
+    public function listarDetalhes():array {
+        $sql = "SELECT noticias.id, noticias.titulo, noticias.data, 
+                    usuarios.nome AS autor, noticias.texto, noticias.imagem
+                FROM noticias INNER JOIN usuarios
+                ON noticias.usuario_id = usuarios.id
+                WHERE noticias.id = :id";
         try {
             $consulta = $this->conexao->prepare($sql);
             $consulta->bindValue(":id", $this->id, PDO::PARAM_INT);
             $consulta->execute();
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao abrir a noticia " .$erro->getMessage());
+            die("Erro ao abrir a notícia: ".$erro->getMessage());
         }
         return $resultado;
     }
 
-    //noticias-por-categoria.php
+    // noticias-por-categoria.php
     public function listarPorCategoria():array {
         $sql = "SELECT 
-                    noticias.id,
-                    noticias.titulo,
-                    noticias.data,
-                    noticias.resumo,
-                    usuarios.nome AS autor,
+                    noticias.id, 
+                    noticias.titulo, 
+                    noticias.data, 
+                    noticias.resumo, 
+                    usuarios.nome AS autor, 
                     categorias.nome AS categoria
-                    FROM noticias
-                        INNER JOIN usuarios ON noticias.usuario_id = usuarios.id
-                        INNER JOIN categorias ON noticias.categoria_id = categorias.id                    
-                    WHERE noticias.categoria_id = :categoria_id";
+                
+                FROM noticias 
+                    INNER JOIN usuarios ON noticias.usuario_id = usuarios.id
+                    INNER JOIN categorias ON noticias.categoria_id = categorias.id
+                
+                WHERE noticias.categoria_id = :categoria_id";
+
 
         try {
             $consulta = $this->conexao->prepare($sql);
@@ -316,12 +293,27 @@ final class Noticia
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $erro) {
-            die("Erro ao listar categoria " .$erro->getMessage());
+            die("Erro ao carregar notícias da categoria: " . $erro->getMessage());
         }
         return $resultado;
     }
-    
 
+    public function busca():array {
+        $sql = "SELECT id, titulo, data, resumo FROM noticias
+                WHERE titulo LIKE :termo
+                OR resumo LIKE :termo 
+                OR texto LIKE :termo
+                ORDER BY data DESC ";
+        try {
+            $consulta = $this->conexao->prepare($sql);
+            $consulta->bindValue(":termo", "%".$this->getTermo()."%", PDO::PARAM_STR);
+            $consulta->execute();
+            $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $erro) {
+            die("Erro ao buscar notícias: " . $erro->getMessage());
+        }
+        return $resultado;
+    }
 
 
 
@@ -428,4 +420,6 @@ final class Noticia
         return $this;
     }
 
+
+   
 }
