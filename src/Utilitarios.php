@@ -12,4 +12,10 @@ abstract class Utilitarios {
         var_dump($dados);
         echo "</pre>";
     }
+
+    //2023-10-27  10:56
+    public static function formatarData(string $data):string {
+        return date("d/m/Y H:i", strtotime($data));        
+    }
+    // 27/10/2023  10:56
 }
